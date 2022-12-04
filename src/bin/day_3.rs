@@ -1,5 +1,5 @@
-use std::collections::{HashMap, HashSet};
 use itertools::Itertools;
+use std::collections::{HashMap, HashSet};
 
 const INPUT: &str = include_str!("../../input/day_3.txt");
 
@@ -12,10 +12,14 @@ fn priority(c: char) -> usize {
 }
 
 fn part_1(input: &str) -> usize {
-    input.lines()
-        .map(|l| { l.split_at(l.len() / 2) })
+    input
+        .lines()
+        .map(|l| l.split_at(l.len() / 2))
         .map(|(fst, snd)| {
-            let map = fst.chars().map(|c| (c, priority(c))).collect::<HashMap<_, _>>();
+            let map = fst
+                .chars()
+                .map(|c| (c, priority(c)))
+                .collect::<HashMap<_, _>>();
             for c in snd.chars() {
                 if let Some(p) = map.get(&c) {
                     return *p;
@@ -27,14 +31,18 @@ fn part_1(input: &str) -> usize {
 }
 
 fn part_2(input: &str) -> usize {
-    input.lines()
+    input
+        .lines()
         .into_iter()
         .chunks(3)
         .into_iter()
         .map(|mut chunk| {
-            let (fst, snd, thd) =  chunk.next_tuple().unwrap();
+            let (fst, snd, thd) = chunk.next_tuple().unwrap();
             let fst_set = fst.chars().collect::<HashSet<_>>();
-            let thd_map = thd.chars().map(|c| (c, priority(c))).collect::<HashMap<_, _>>();
+            let thd_map = thd
+                .chars()
+                .map(|c| (c, priority(c)))
+                .collect::<HashMap<_, _>>();
             for c in snd.chars() {
                 if fst_set.contains(&c) {
                     if let Some(p) = thd_map.get(&c) {
@@ -46,7 +54,6 @@ fn part_2(input: &str) -> usize {
         })
         .sum()
 }
-
 
 fn main() {
     println!("part 1: {}", part_1(INPUT));
