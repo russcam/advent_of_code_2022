@@ -46,8 +46,6 @@ fn main() {
     println!("max calories: {}", inventories[0].sum());
     println!(
         "max three calories: {}",
-        &inventories[..3].iter().map(|i| i.sum()).sum::<usize>()
+        &inventories[..3].iter().map(Inventory::sum).sum::<usize>()
     );
 }
-
-
