@@ -20,14 +20,8 @@ impl From<&str> for SectionAssignment {
 impl SectionAssignment {
     pub fn fully_overlaps(&self, other: &SectionAssignment) -> bool {
         match self.from.cmp(&other.from) {
-            Ordering::Less => match self.to.cmp(&other.to) {
-                Ordering::Greater | Ordering::Equal => true,
-                _ => false,
-            },
-            Ordering::Greater => match self.to.cmp(&other.to) {
-                Ordering::Less | Ordering::Equal => true,
-                _ => false,
-            },
+            Ordering::Less => matches!(self.to.cmp(&other.to), Ordering::Greater | Ordering::Equal),
+            Ordering::Greater => matches!(self.to.cmp(&other.to), Ordering::Less | Ordering::Equal),
             Ordering::Equal => true,
         }
     }
