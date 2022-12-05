@@ -1,13 +1,9 @@
-extern crate core;
-
 use itertools::Itertools;
 use once_cell::sync::Lazy;
 use regex::Regex;
 use std::collections::VecDeque;
 
 const INPUT: &str = include_str!("../../input/day_5.txt");
-
-struct Crates(Vec<VecDeque<char>>);
 
 static MOVE_REGEX: Lazy<Regex> =
     Lazy::new(|| Regex::new(r"^move (\d+) from (\d+) to (\d+)$").unwrap());
@@ -30,6 +26,8 @@ impl From<&str> for Command {
         }
     }
 }
+
+struct Crates(Vec<VecDeque<char>>);
 
 impl Crates {
     pub fn new(input: &str) -> Self {
