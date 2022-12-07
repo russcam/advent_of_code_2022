@@ -109,23 +109,6 @@ impl Filesystem {
         }
     }
 
-    fn current_dir(&mut self) -> &mut Dir {
-        self.entries[self.cwd].dir_mut().unwrap()
-    }
-
-    fn contains_entry(&mut self, name: &str) -> bool {
-        let dir = self.entries[self.cwd].dir().unwrap();
-        for child in &dir.children {
-            if let Some(c) = self.entries.get(*child) {
-                if c.name() == name {
-                    return true;
-                }
-            }
-        }
-
-        false
-    }
-
     pub fn add_dir(&mut self, name: &str) {
         if !self.contains_entry(name) {
             let idx = self.entries.len();
@@ -179,12 +162,6 @@ impl Filesystem {
         }
     }
 
-    fn ls(&self) -> HashSet<(String, usize)> {
-        let mut set: HashSet<(String, usize)> = HashSet::new();
-        self.traverse("", &self.entries[0], &mut set);
-        set
-    }
-
     pub fn total_size(&self) -> usize {
         let set = self.ls();
         set.iter()
@@ -204,6 +181,26 @@ impl Filesystem {
             .filter(|(_, size)| *size >= 30_000_000 - unused_space)
             .min_by(|(_, x), (_, y)| (*x).cmp(y))
             .unwrap()
+    }
+
+    fn current_dir(&mut self) -> &mut Dir {
+        self.entries[self.cwd].dir_mut().unwrap()
+    }
+
+    fn contains_entry(&mut self, name: &str) -> bool {
+        self.entries[self.cwd]
+            .dir()
+            .unwrap()
+            .children
+            .iter()
+            .filter_map(|c| self.entries.get(*c))
+            .any(|e| e.name() == name)
+    }
+
+    fn ls(&self) -> HashSet<(String, usize)> {
+        let mut set = HashSet::new();
+        self.traverse("", &self.entries[0], &mut set);
+        set
     }
 
     fn traverse(&self, path: &str, entry: &DirEntry, set: &mut HashSet<(String, usize)>) -> usize {
